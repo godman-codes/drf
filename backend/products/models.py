@@ -10,5 +10,11 @@ class Product(models.Model):
     def sale_price(self):
         return round(float(self.price) * 0.9, 2)
 
+    def get_discount(self):
+        '''
+        instance method
+        '''
+        return '122'
+    
     def __repr__(self) -> str:
         return f"product: {self.title}"
