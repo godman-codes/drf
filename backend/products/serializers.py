@@ -31,4 +31,9 @@ class ProductSerializers(serializers.ModelSerializer):
         this method takes the two attribute the productSerializer class it's in
         and the database model object and instantiate the get_discount method associated with the method
         '''
-        return obj.get_discount() 
+        return obj.get_discount()
+
+'''
+note: we can have multiple serializers for one model class by changing the class name eg. PrimaryModelSerializers, SecondaryModelSerializers e.t.c
+and customize them any how we like 
+'''
