@@ -39,8 +39,7 @@ product_detail_view = ProductDetailAPIView.as_view()
 
 class ProductListCreateAPIView(generics.ListCreateAPIView):
     '''
-    if request.method == 'POST' -> we will create a new product
-    if request.method == 'GET': -> we will get all the products as a list
+    cerate view
     '''
     queryset = Product.objects.all() #getting the query sets from the database
     serializer_class = ProductSerializers
