@@ -81,7 +81,7 @@ def product_alt_view(request, pk=None, *args, **kwargs): # pk has to have a defa
     '''
     this view is able to handle different http methods
     '''
-    method = request.method # this will get the http method
+    method = request.method # this will get the http method also  put -> update, delete -> destroy
 
     if method == 'GET':
         if pk is not None:
