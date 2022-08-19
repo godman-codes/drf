@@ -65,16 +65,6 @@ product_list_create_view = ProductListCreateAPIView.as_view() # this is the view
 
 
 
-class ProductUpdateAPIView(generics.UpdateAPIView):
-    '''
-    create view
-    '''
-    queryset = Product.objects.all() # getting the query sets from the database
-    serializer_class = ProductSerializers # this is the serializer class that will be used to serialize the data
-    # lookup_field = 'pk'
-
-product_Update_view = ProductUpdateAPIView.as_view()
-
 
 @api_view(['GET', 'POST']) # this decorator allows us to use the same view for both get and post requests
 def product_alt_view(request, pk=None, *args, **kwargs): # pk has to have a default value of none because we don't know the pk of the product yet
@@ -109,3 +99,36 @@ def product_alt_view(request, pk=None, *args, **kwargs): # pk has to have a defa
         return Response({'invalid': 'Not good data'}, status=400)
 
 
+class ProductUpdateAPIView(generics.UpdateAPIView):
+    '''
+    update product view
+    '''
+    queryset = Product.objects.all() # getting the query sets from the database
+    serializer_class = ProductSerializers # this is the serializer class that will be used to serialize the data
+    lookup_field = 'pk'
+
+    def perform_update(self, serializer):
+        '''
+        this function can only be called in the generic update class view
+        and we can use it to manipulate the data we want to save to the data base
+        '''
+        instance = serializer.save() # this will save the data to the database
+        if not instance.content:
+            instance.content = instance.title
+            
+
+product_Update_view = ProductUpdateAPIView.as_view()
+
+class ProductDestroyAPIView(generics.DestroyAPIView):
+    '''
+    Destroy product view
+    '''
+    queryset = Product.objects.all() # getting the query sets from the database
+    serializer_class = ProductSerializers # this is the serializer class that will be used to serialize the data
+    lookup_field = 'pk'
+
+    def perform_destroy(self, instance):
+        # instance 
+        super().perform_destroy(instance) # this will delete the instance from the database
+
+product_delete_view = ProductDestroyAPIView.as_view()
