@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, mixins
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
@@ -64,6 +64,55 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
 product_list_create_view = ProductListCreateAPIView.as_view() # this is the view that will be used in the urls.py file
 
 
+class ProductMixinView(mixins.ListModelMixin,
+                    mixins.RetrieveModelMixin,
+                    mixins.CreateModelMixin,
+                    mixins.DestroyModelMixin,
+                    mixins.UpdateModelMixin,
+                    generics.GenericAPIView
+                    ):
+    '''
+        this is a mixin view
+        Note in class base views we write functions for different methods
+        while in function based views we write conditionals for different methods
+    '''
+    queryset = Product.objects.all() #getting the query sets from the database
+    serializer_class = ProductSerializers # make sure this is serializer_class and not just serializer
+    lookup_field = 'pk'
+    
+    def get(self, request, *args, **kwargs):
+        # print(args, kwargs)
+        pk = kwargs.get('pk') # this gets the pk from the url
+        if pk is not None: # if the pk is not None then we will return the detail view
+            return self.retrieve(request, *args, **kwargs) 
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs): # this is the create view
+        
+        return self.create(request, *args, **kwargs) # this is the create view
+
+    def perform_create(self, serializer):
+        '''
+        this function can only be called in the generic create class view
+        and we can use it to manipulate the data we want to save to the data base
+        '''
+        # serializer.save(user=self.request.user) we can assign user like this 
+        print(serializer.validated_data)
+        title = serializer.validated_data.get('title') # this gets the title from the from the validated serialized data
+        content = serializer.validated_data.get('content') or None # this get the content and if the content isn't there it will return None
+
+        if content is None:
+            content = 'this is a view doing cool stuff' # if the content is not there then we will assign a string to the content
+        serializer.save(content=content) # we can save the content to the database
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+        
+
+product_mixin_view = ProductMixinView.as_view()
 
 
 @api_view(['GET', 'POST']) # this decorator allows us to use the same view for both get and post requests

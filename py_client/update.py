@@ -1,6 +1,6 @@
 import requests
 
-end_point = "http://localhost:8000/api/product/1/update/"
+end_point = "http://localhost:8000/api/product/3/update/"
 
 data =  {
     'title': 'tobit update',
