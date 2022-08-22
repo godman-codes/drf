@@ -1,4 +1,4 @@
-from rest_framework import generics, mixins
+from rest_framework import authentication, generics, mixins, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
@@ -15,28 +15,28 @@ class ProductDetailAPIView(generics.RetrieveAPIView):
 
 product_detail_view = ProductDetailAPIView.as_view()
 
-# class ProductCreateAPIView(generics.CreateAPIView):
-#     '''
-#     create products
-#     '''
-#     queryset = Product.objects.all() #getting the query sets from the database
-#     serializer_class = ProductSerializers
+class ProductCreateAPIView(generics.CreateAPIView):
+    '''
+    create products
+    '''
+    queryset = Product.objects.all() #getting the query sets from the database
+    serializer_class = ProductSerializers
 
-#     def perform_create(self, serializer):
-#         '''
-#         this function can only be called in the generic create class view
-#         and we can use it to manipulate the data we want to save to the data base
-#         '''
-#         # serializer.save(user=self.request.user) we can assign user like this 
-#         print(serializer.validated_data)
-#         title = serializer.validated_data.get('title') # this gets the title from the from the validated serialized data
-#         content = serializer.validated_data.get('content') or None # this get the content and if the content isn't there it will return None  
+    def perform_create(self, serializer):
+        '''
+        this function can only be called in the generic create class view
+        and we can use it to manipulate the data we want to save to the data base
+        '''
+        # serializer.save(user=self.request.user) we can assign user like this 
+        print(serializer.validated_data)
+        title = serializer.validated_data.get('title') # this gets the title from the from the validated serialized data
+        content = serializer.validated_data.get('content') or None # this get the content and if the content isn't there it will return None  
 
-#         if not content:
-#             content = title # if the content is not there then we will assign the title to the content
-#         serializer.save(content=content) # we can save the content to the database
+        if not content:
+            content = title # if the content is not there then we will assign the title to the content
+        serializer.save(content=content) # we can save the content to the database
 
-# product_create_view = ProductCreateAPIView.as_view() # this is the view that will be used in the urls.py file
+product_create_view = ProductCreateAPIView.as_view() # this is the view that will be used in the urls.py file
 
 
 class ProductListCreateAPIView(generics.ListCreateAPIView):
@@ -45,7 +45,12 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
     if request.method == 'GET': -> list all products
     '''
     queryset = Product.objects.all() #getting the query sets from the database
-    serializer_class = ProductSerializers
+    serializer_class = ProductSerializers # we can save the content to the database
+    # authentication_classes = [] # this is to disable authentication by overriding the get_authentication_classes method
+    authentication_classes = [authentication.SessionAuthentication] # this is the authentication class that will be used to authenticate the user
+    # permission_classes = [permissions.IsAuthenticated] # this will make sure that only authenticated users can access this view
+    # permission_classes = [permissions.IsAuthenticatedOrReadOnly] # this will make sure that only authenticated users can change the data in the database
+    permission_classes = [permissions.DjangoModelPermissions]
 
     def perform_create(self, serializer):
         '''
