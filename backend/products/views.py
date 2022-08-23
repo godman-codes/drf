@@ -181,6 +181,10 @@ class ProductDestroyAPIView(generics.DestroyAPIView):
     Destroy product view
     '''
     permission_classes = [IsDeleteRolesPermission] # checks if we have permissions to delete a product view
+    '''
+    permission_classes = [permissions.IsAdminUser, IsDeleteRolesPermission] # when there are two permissions in the permissions class arrays
+    the first permission checker will be used before the preceding permission checker will be used    
+    '''
     queryset = Product.objects.all() # getting the query sets from the database
     serializer_class = ProductSerializers # this is the serializer class that will be used to serialize the data
     lookup_field = 'pk'
