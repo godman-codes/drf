@@ -4,13 +4,13 @@ from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
 from .models import Product
 from .serializers import ProductSerializers
-from .permissions import IsDeleteRolesPermission
+from .permissions import IsDeleteRolesPermission, IsStaffEditorPermission
 
 class ProductDetailAPIView(generics.RetrieveAPIView):
     '''
     note: detail view gets just one single item
     '''
-    permission_classes = [IsDeleteRolesPermission]
+    permission_classes = [permissions.IsAdminUser ,IsStaffEditorPermission ,IsDeleteRolesPermission]
     queryset = Product.objects.all() #getting the query sets from the database
     serializer_class = ProductSerializers
     # lookup_field = 'pk'
@@ -52,7 +52,7 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
     authentication_classes = [authentication.SessionAuthentication] # this is the authentication class that will be used to authenticate the user
     # permission_classes = [permissions.IsAuthenticated] # this will make sure that only authenticated users can access this view
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly] # this will make sure that only authenticated users can change the data in the database
-    permission_classes = [IsDeleteRolesPermission]
+    permission_classes = [permissions.IsAdminUser ,IsStaffEditorPermission ,IsDeleteRolesPermission]
 
     def perform_create(self, serializer):
         '''
@@ -159,7 +159,7 @@ class ProductUpdateAPIView(generics.UpdateAPIView):
     '''
     update product view
     '''
-    permission_classes = [IsDeleteRolesPermission]
+    permission_classes = [permissions.IsAdminUser ,IsStaffEditorPermission, IsDeleteRolesPermission]
     queryset = Product.objects.all() # getting the query sets from the database
     serializer_class = ProductSerializers # this is the serializer class that will be used to serialize the data
     lookup_field = 'pk'
@@ -180,7 +180,7 @@ class ProductDestroyAPIView(generics.DestroyAPIView):
     '''
     Destroy product view
     '''
-    permission_classes = [IsDeleteRolesPermission] # checks if we have permissions to delete a product view
+    permission_classes = [permissions.IsAdminUser ,IsStaffEditorPermission, IsDeleteRolesPermission] # checks if we have permissions to delete a product view
     '''
     permission_classes = [permissions.IsAdminUser, IsDeleteRolesPermission] # when there are two permissions in the permissions class arrays
     the first permission checker will be used before the preceding permission checker will be used    
