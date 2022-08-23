@@ -4,11 +4,13 @@ from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
 from .models import Product
 from .serializers import ProductSerializers
+from .permissions import IsDeleteRolesPermission
 
 class ProductDetailAPIView(generics.RetrieveAPIView):
     '''
     note: detail view gets just one single item
     '''
+    permission_classes = [IsDeleteRolesPermission]
     queryset = Product.objects.all() #getting the query sets from the database
     serializer_class = ProductSerializers
     # lookup_field = 'pk'
@@ -50,7 +52,7 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
     authentication_classes = [authentication.SessionAuthentication] # this is the authentication class that will be used to authenticate the user
     # permission_classes = [permissions.IsAuthenticated] # this will make sure that only authenticated users can access this view
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly] # this will make sure that only authenticated users can change the data in the database
-    permission_classes = [permissions.DjangoModelPermissions]
+    permission_classes = [IsDeleteRolesPermission]
 
     def perform_create(self, serializer):
         '''
@@ -157,6 +159,7 @@ class ProductUpdateAPIView(generics.UpdateAPIView):
     '''
     update product view
     '''
+    permission_classes = [IsDeleteRolesPermission]
     queryset = Product.objects.all() # getting the query sets from the database
     serializer_class = ProductSerializers # this is the serializer class that will be used to serialize the data
     lookup_field = 'pk'
@@ -177,6 +180,7 @@ class ProductDestroyAPIView(generics.DestroyAPIView):
     '''
     Destroy product view
     '''
+    permission_classes = [IsDeleteRolesPermission] # checks if we have permissions to delete a product view
     queryset = Product.objects.all() # getting the query sets from the database
     serializer_class = ProductSerializers # this is the serializer class that will be used to serialize the data
     lookup_field = 'pk'
