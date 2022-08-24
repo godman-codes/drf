@@ -50,7 +50,7 @@ class ProductSerializers(serializers.ModelSerializer):
         and the database model object and instantiate the get_discount method associated with the method
         '''
         '''
-        this returning AttributeError: 'collections.OrderedDict' object has no attribute 'get_discount'because we havent saved the data to the model so we 
+        this returning AttributeError: 'collections.OrderedDict' object has no attribute 'get_discount'because we haven't saved the data to the model so we 
         cannot access obj.get_discount()
         we can handle this withe except or hasattr method or isinstance method
         '''
