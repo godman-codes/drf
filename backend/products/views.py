@@ -73,14 +73,19 @@ class ProductListCreateAPIView(
         '''
         # serializer.save(user=self.request.user) we can assign user like this 
         print(serializer.validated_data)
-        email = serializer.validated_data.pop('email') # this gets the email address and prevent it from being sent to the database
-        print(email)
+        # email = serializer.validated_data.pop('email') # this gets the email address and prevent it from being sent to the database
+        # print(email)
         title = serializer.validated_data.get('title') # this gets the title from the from the validated serialized data
         content = serializer.validated_data.get('content') or None # this get the content and if the content isn't there it will return None  
 
         if not content:
             content = title # if the content is not there then we will assign the title to the content
-        serializer.save(content=content) # we can save the content to the database
+        serializer.save(user=self.request.user, content=content) # we can save the content to the database and this will automatically grab the logged in user********************************
+    def get_queryset(self, *args, **kwargs):
+        qs = super().get_queryset(*args, **kwargs)
+        request = self.request
+        print(request.user)
+        return qs.filter(user=request.user) # this will make the get list method only return values that are associated with the logged in user
 
 product_list_create_view = ProductListCreateAPIView.as_view() # this is the view that will be used in the urls.py file
 
