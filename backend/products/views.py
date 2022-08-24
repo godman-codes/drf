@@ -73,6 +73,8 @@ class ProductListCreateAPIView(
         '''
         # serializer.save(user=self.request.user) we can assign user like this 
         print(serializer.validated_data)
+        email = serializer.validated_data.pop('email') # this gets the email address and prevent it from being sent to the database
+        print(email)
         title = serializer.validated_data.get('title') # this gets the title from the from the validated serialized data
         content = serializer.validated_data.get('content') or None # this get the content and if the content isn't there it will return None  
 

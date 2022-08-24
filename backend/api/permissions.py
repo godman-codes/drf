@@ -11,7 +11,7 @@ class IsStaffEditorPermission(permissions.DjangoModelPermissions): # the class n
         'DELETE': ['%(app_label)s.delete_%(model_name)s'],
     }
     def has_permission(self, request, view):
-        print(request.user.get_all_permissions())
+        # print(request.user.get_all_permissions())
         if request.user.is_staff: # this checks if the user is a staff
             return True
         return super().has_permission(request, view)
@@ -30,7 +30,7 @@ class IsDeleteRolesPermission(permissions.DjangoModelPermissions):
         'DELETE': ['%(app_label)s.delete_%(model_name)s'],
     }
     def has_permission(self, request, view):
-        print(request.user.get_all_permissions()) # this will print out all the users permissions
+        # print(request.user.get_all_permissions()) # this will print out all the users permissions
         if request.user.is_staff: # this will check if the user is a staff 
             return True
         return super().has_permission(request, view) # we will check all the permission and verify the method as one we have permission for 

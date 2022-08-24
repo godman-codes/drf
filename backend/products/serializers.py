@@ -8,30 +8,50 @@ class ProductSerializers(serializers.ModelSerializer):
     create it like forms in normal django project the only difference
     is the serializers from the django framework
     '''
-    url = serializers.SerializerMethodField(read_only=True)
+    edit_url = serializers.SerializerMethodField(read_only=True)
+    url = serializers.HyperlinkedIdentityField(
+        view_name='product-detail',
+        lookup_field = 'pk'
+    ) # this can also be used for creating url links for each product for redirection to different views
     my_discount = serializers.SerializerMethodField(read_only=True) #this is meant to look for 
     # get_<attribute name> which is meant to be get_discount but it can't find it 
     # so we count instance a self class for this class and name it get_discount
     # to initiate that get_discount attribute
     # so we changed it from get discount to my_discount which will now look for 
     # the attribute get_my_discount
+    email = serializers.EmailField(write_only=True) # without additional configuration this serializer class 
+    # will try to create this attribute in the model but will meet an error because the email attribute is not in our product model
     class Meta:
         model = Product
         fields = [
+            'edit_url',
             'url',
+            'email',
             'pk',
             'title',
             'content',
             'price',
             'sale_price',
-            'my_discount', #changed this from get_discount to discount and it raised an error because it cound not get the get discoun function from the product model class
+            'my_discount', #changed this from get_discount to discount and it raised an error because it could not get the get discount function from the product model class
         ]
 
         def __repr__(self) -> str:
             return f'Product **serializer'
+    # def create(self, validated_data):
+    #     # return Product.objects.create(**validated_data) # note the double asterisk used to unpack an object
+    #     # print(validated_data)
+    #     # email = validated_data.pop('email') # this prevents the email from being sent to the product model class
+    #     obj = super().create(validated_data)
+    #     # print(email, obj)
+    #     return obj
+
+    # def update(self, instance, validated_data):
+    #     instance.title = validated_data.get('title')
+    #     email = validated_data.pop('email') # this gets the email address
+    #     return instance
             
 
-    def get_url(self, obj):
+    def get_edit_url(self, obj):
         '''
         the use of reverse will make this url relative to the product model class
         so url will be an active link
@@ -42,7 +62,7 @@ class ProductSerializers(serializers.ModelSerializer):
         request = self.context.get('request')
         if request is None:
             return None
-        return reverse("product-detail", kwargs = {'pk': obj.pk}, request=request)
+        return reverse("product-update", kwargs = {'pk': obj.pk}, request=request)
     
     def get_my_discount(self, obj):
         '''
