@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from .models import Product
 from .serializers import ProductSerializers
 from .permissions import IsDeleteRolesPermission, IsStaffEditorPermission
+from .authentication import TokenAuthentication
 
 class ProductDetailAPIView(generics.RetrieveAPIView):
     '''
@@ -13,7 +14,7 @@ class ProductDetailAPIView(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAdminUser ,IsStaffEditorPermission ,IsDeleteRolesPermission]
     authentication_classes= [
         authentication.SessionAuthentication,
-        authentication.TokenAuthentication
+        TokenAuthentication
         ]
     queryset = Product.objects.all() #getting the query sets from the database
     serializer_class = ProductSerializers
@@ -53,10 +54,10 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
     queryset = Product.objects.all() #getting the query sets from the database
     serializer_class = ProductSerializers # we can save the content to the database
     # authentication_classes = [] # this is to disable authentication by overriding the get_authentication_classes method
-    authentication_classes = [
-        authentication.SessionAuthentication,
-        authentication.TokenAuthentication
-        ] # this is the authentication class that will be used to authenticate the user
+    # authentication_classes = [
+    #     authentication.SessionAuthentication,
+    #     authentication.TokenAuthentication
+    #     ] # this is the authentication class that will be used to authenticate the user
     # permission_classes = [permissions.IsAuthenticated] # this will make sure that only authenticated users can access this view
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly] # this will make sure that only authenticated users can change the data in the database
     permission_classes = [permissions.IsAdminUser ,IsStaffEditorPermission ,IsDeleteRolesPermission]
