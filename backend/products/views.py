@@ -1,11 +1,13 @@
+from ast import Del
 from rest_framework import authentication, generics, mixins, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
 from .models import Product
 from .serializers import ProductSerializers
-from .permissions import IsDeleteRolesPermission, IsStaffEditorPermission
-from .authentication import TokenAuthentication
+from api.authentication import TokenAuthentication
+from api.permissions import IsDeleteRolesPermission, IsStaffEditorPermission
+from api.mixins import StaffEditorPermissionMixin, DeleteRolesPermissionMixin
 
 class ProductDetailAPIView(generics.RetrieveAPIView):
     '''
@@ -46,7 +48,10 @@ class ProductCreateAPIView(generics.CreateAPIView):
 product_create_view = ProductCreateAPIView.as_view() # this is the view that will be used in the urls.py file
 
 
-class ProductListCreateAPIView(generics.ListCreateAPIView):
+class ProductListCreateAPIView(
+    StaffEditorPermissionMixin,
+    DeleteRolesPermissionMixin, 
+    generics.ListCreateAPIView): 
     '''
     if request.method == 'POST': -> create new product
     if request.method == 'GET': -> list all products
@@ -60,7 +65,7 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
     #     ] # this is the authentication class that will be used to authenticate the user
     # permission_classes = [permissions.IsAuthenticated] # this will make sure that only authenticated users can access this view
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly] # this will make sure that only authenticated users can change the data in the database
-    permission_classes = [permissions.IsAdminUser ,IsStaffEditorPermission ,IsDeleteRolesPermission]
+    # permission_classes = [permissions.IsAdminUser ,IsStaffEditorPermission ,IsDeleteRolesPermission]
 
     def perform_create(self, serializer):
         '''
