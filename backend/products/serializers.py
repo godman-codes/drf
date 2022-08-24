@@ -1,8 +1,7 @@
 from rest_framework import serializers
 from rest_framework.reverse import reverse
-# import serializers from rest framework 
 from .models import Product
-
+from .validators import validate_title, validate_title_no_hello, unique_product_title
 class ProductSerializers(serializers.ModelSerializer):
     '''
     create it like forms in normal django project the only difference
@@ -19,17 +18,21 @@ class ProductSerializers(serializers.ModelSerializer):
     # to initiate that get_discount attribute
     # so we changed it from get discount to my_discount which will now look for 
     # the attribute get_my_discount
-    email = serializers.EmailField(write_only=True) # without additional configuration this serializer class 
+    # email = serializers.EmailField(write_only=True) # without additional configuration this serializer class 
     # will try to create this attribute in the model but will meet an error because the email attribute is not in our product model
+    title = serializers.CharField(validators=[validate_title_no_hello, unique_product_title]) # the title attribute will validate against the imported validation function from validate.py 
+    name = serializers.CharField(source='title', read_only=True) # this creates a read only field that is gets its value from the title and maybe it only works with attributes in the database model
     class Meta:
         model = Product
         fields = [
+            # 'user', since we are automatically grabbing the logged in user we don't need to display it as fields in our serializers
             'edit_url',
             'url',
-            'email',
+            # 'email',
             'pk',
             'title',
             'content',
+            'name',
             'price',
             'sale_price',
             'my_discount', #changed this from get_discount to discount and it raised an error because it could not get the get discount function from the product model class
@@ -37,6 +40,11 @@ class ProductSerializers(serializers.ModelSerializer):
 
         def __repr__(self) -> str:
             return f'Product **serializer'
+    # def validate_title(self, value): # to validate a field value we create a function with validate as prefix followed by an underscore e.g validate_<fieldname>(self, value)
+    #     qs = Product.objects.filter(title__iexact=value) # title__exact is case sensitive while title__iexact is case insensitive
+    #     if qs.exists():
+    #         raise serializers.ValidationError(f"{value} is already a product name")
+    #     return value
     # def create(self, validated_data):
     #     # return Product.objects.create(**validated_data) # note the double asterisk used to unpack an object
     #     # print(validated_data)
