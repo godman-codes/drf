@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.reverse import reverse
 # import serializers from rest framework 
 from .models import Product
 
@@ -7,6 +8,7 @@ class ProductSerializers(serializers.ModelSerializer):
     create it like forms in normal django project the only difference
     is the serializers from the django framework
     '''
+    url = serializers.SerializerMethodField(read_only=True)
     my_discount = serializers.SerializerMethodField(read_only=True) #this is meant to look for 
     # get_<attribute name> which is meant to be get_discount but it can't find it 
     # so we count instance a self class for this class and name it get_discount
@@ -16,6 +18,8 @@ class ProductSerializers(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = [
+            'url',
+            'pk',
             'title',
             'content',
             'price',
@@ -25,7 +29,21 @@ class ProductSerializers(serializers.ModelSerializer):
 
         def __repr__(self) -> str:
             return f'Product **serializer'
+            
 
+    def get_url(self, obj):
+        '''
+        the use of reverse will make this url relative to the product model class
+        so url will be an active link
+        Note: this function adds an active link to the product model class
+        '''
+        # return f"/api/product/{obj.pk}/"
+        # print(self.context)
+        request = self.context.get('request')
+        if request is None:
+            return None
+        return reverse("product-detail", kwargs = {'pk': obj.pk}, request=request)
+    
     def get_my_discount(self, obj):
         '''
         this method takes the two attribute the productSerializer class it's in
