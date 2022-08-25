@@ -6,7 +6,7 @@ token = authLogin()
 if token is not None:
     print('smart')
     end_point = "http://localhost:8000/api/product/" # this is the same endpoint as the one for the create view
-    response = requests.get(end_point, headers={"Authorization": f"Token {token}"})
+    response = requests.get(end_point, headers={"Authorization": f"Bearer {token}"})
     print(response.json())
 else:
     raise Exception('invalid credentials')

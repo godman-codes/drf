@@ -6,18 +6,23 @@ from django.shortcuts import get_object_or_404
 from .models import Product
 from .serializers import ProductSerializers
 from api.authentication import TokenAuthentication
-from api.permissions import IsDeleteRolesPermission, IsStaffEditorPermission
-from api.mixins import StaffEditorPermissionMixin, DeleteRolesPermissionMixin
+from api.permissions import  IsStaffEditorPermission
+from api.mixins import (
+    StaffEditorPermissionMixin,
+    UserQuerySetMixin)
 
-class ProductDetailAPIView(generics.RetrieveAPIView):
+class ProductDetailAPIView(
+    UserQuerySetMixin,
+    StaffEditorPermissionMixin,
+    generics.RetrieveAPIView):
     '''
     note: detail view gets just one single item
     '''
-    permission_classes = [permissions.IsAdminUser ,IsStaffEditorPermission ,IsDeleteRolesPermission]
-    authentication_classes= [
-        authentication.SessionAuthentication,
-        TokenAuthentication
-        ]
+    # permission_classes = [permissions.IsAdminUser ,IsStaffEditorPermission]
+    # authentication_classes= [
+    #     authentication.SessionAuthentication,
+    #     TokenAuthentication
+    #     ]
     queryset = Product.objects.all() #getting the query sets from the database
     serializer_class = ProductSerializers
     # lookup_field = 'pk'
@@ -49,12 +54,14 @@ product_create_view = ProductCreateAPIView.as_view() # this is the view that wil
 
 
 class ProductListCreateAPIView(
+    UserQuerySetMixin,
     StaffEditorPermissionMixin,
     generics.ListCreateAPIView): 
     '''
     if request.method == 'POST': -> create new product
     if request.method == 'GET': -> list all products
     '''
+    allow_staff_view = True # you can use variables to control what the staff sees by overwriting
     queryset = Product.objects.all() #getting the query sets from the database
     serializer_class = ProductSerializers # we can save the content to the database
     # authentication_classes = [] # this is to disable authentication by overriding the get_authentication_classes method
@@ -64,7 +71,7 @@ class ProductListCreateAPIView(
     #     ] # this is the authentication class that will be used to authenticate the user
     # permission_classes = [permissions.IsAuthenticated] # this will make sure that only authenticated users can access this view
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly] # this will make sure that only authenticated users can change the data in the database
-    # permission_classes = [permissions.IsAdminUser ,IsStaffEditorPermission ,IsDeleteRolesPermission]
+    # permission_classes = [IsStaffEditorPermission]
 
     def perform_create(self, serializer):
         '''
@@ -81,11 +88,11 @@ class ProductListCreateAPIView(
         if not content:
             content = title # if the content is not there then we will assign the title to the content
         serializer.save(user=self.request.user, content=content) # we can save the content to the database and this will automatically grab the logged in user********************************
-    def get_queryset(self, *args, **kwargs):
-        qs = super().get_queryset(*args, **kwargs)
-        request = self.request
-        print(request.user)
-        return qs.filter(user=request.user) # this will make the get list method only return values that are associated with the logged in user
+    # def get_queryset(self, *args, **kwargs):
+    #     qs = super().get_queryset(*args, **kwargs)
+    #     request = self.request
+    #     print(request.user)
+    #     return qs.filter(user=request.user) # this will make the get list method only return values that are associated with the logged in user
 
 product_list_create_view = ProductListCreateAPIView.as_view() # this is the view that will be used in the urls.py file
 
