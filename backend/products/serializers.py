@@ -15,7 +15,7 @@ class ProductSerializers(serializers.ModelSerializer):
         view_name='product-detail',
         lookup_field = 'pk'
     ) # this can also be used for creating url links for each product for redirection to different views
-    my_discount = serializers.SerializerMethodField(read_only=True) #this is meant to look for 
+    # my_discount = serializers.SerializerMethodField(read_only=True) #this is meant to look for 
     # get_<attribute name> which is meant to be get_discount but it can't find it 
     # so we count instance a self class for this class and name it get_discount
     # to initiate that get_discount attribute
@@ -24,10 +24,10 @@ class ProductSerializers(serializers.ModelSerializer):
     # email = serializers.EmailField(write_only=True) # without additional configuration this serializer class 
     # will try to create this attribute in the model but will meet an error because the email attribute is not in our product model
     # email = serializers.EmailField(source='user.email', read_only=True) # the use of source here can be used to grab the email of the user associated with this product models
-    my_user_data = serializers.SerializerMethodField(read_only=True)
+    # my_user_data = serializers.SerializerMethodField(read_only=True)
     title = serializers.CharField(validators=[validate_title_no_hello, unique_product_title]) # the title attribute will validate against the imported validation function from validate.py 
     name = serializers.CharField(source='title', read_only=True) # this creates a read only field that is gets its value from the title and maybe it only works with attributes in the database model
-    other_products = UserProductInlineSerializer(source='user.product_set.all', read_only=True, many=True) # the source grabs it from the tables relationship to the user tables
+    # other_products = UserProductInlineSerializer(source='user.product_set.all', read_only=True, many=True) # the source grabs it from the tables relationship to the user tables
 
     class Meta:
         model = Product
@@ -43,9 +43,9 @@ class ProductSerializers(serializers.ModelSerializer):
             'name',
             'price',
             'sale_price',
-            'my_discount', #changed this from get_discount to discount and it raised an error because it could not get the get discount function from the product model class
-            'my_user_data',
-            'other_products'
+            # 'my_discount', #changed this from get_discount to discount and it raised an error because it could not get the get discount function from the product model class
+            # 'my_user_data',
+            # 'other_products'
         ]
 
         def __repr__(self) -> str:
