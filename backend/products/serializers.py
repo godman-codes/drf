@@ -1,12 +1,15 @@
 from rest_framework import serializers
 from rest_framework.reverse import reverse
+from api.serializers import UserPublicSerializer
 from .models import Product
 from .validators import validate_title, validate_title_no_hello, unique_product_title
+from api.serializers import UserProductInlineSerializer
 class ProductSerializers(serializers.ModelSerializer):
     '''
     create it like forms in normal django project the only difference
     is the serializers from the django framework
     '''
+    owner = UserPublicSerializer(source='user', read_only=True)
     edit_url = serializers.SerializerMethodField(read_only=True)
     url = serializers.HyperlinkedIdentityField(
         view_name='product-detail',
@@ -20,12 +23,17 @@ class ProductSerializers(serializers.ModelSerializer):
     # the attribute get_my_discount
     # email = serializers.EmailField(write_only=True) # without additional configuration this serializer class 
     # will try to create this attribute in the model but will meet an error because the email attribute is not in our product model
+    # email = serializers.EmailField(source='user.email', read_only=True) # the use of source here can be used to grab the email of the user associated with this product models
+    my_user_data = serializers.SerializerMethodField(read_only=True)
     title = serializers.CharField(validators=[validate_title_no_hello, unique_product_title]) # the title attribute will validate against the imported validation function from validate.py 
     name = serializers.CharField(source='title', read_only=True) # this creates a read only field that is gets its value from the title and maybe it only works with attributes in the database model
+    other_products = UserProductInlineSerializer(source='user.product_set.all', read_only=True, many=True) # the source grabs it from the tables relationship to the user tables
+
     class Meta:
         model = Product
         fields = [
-            # 'user', since we are automatically grabbing the logged in user we don't need to display it as fields in our serializers
+            # 'user', # since we are automatically grabbing the logged in user we don't need to display it as fields in our serializers
+            'owner', 
             'edit_url',
             'url',
             # 'email',
@@ -36,10 +44,24 @@ class ProductSerializers(serializers.ModelSerializer):
             'price',
             'sale_price',
             'my_discount', #changed this from get_discount to discount and it raised an error because it could not get the get discount function from the product model class
+            'my_user_data',
+            'other_products'
         ]
 
         def __repr__(self) -> str:
             return f'Product **serializer'
+
+
+    # def get_other_products(self, obj):
+    #     print(obj.user)
+    #     my_products_qs = self.user.product_set.all()
+    #     return UserProductInlineSerializer(my_products_qs, many=True, context=self.context).data
+    
+    
+    def get_my_user_data(self, obj):
+        return {
+            "username": obj.user.username,
+        }
     # def validate_title(self, value): # to validate a field value we create a function with validate as prefix followed by an underscore e.g validate_<fieldname>(self, value)
     #     qs = Product.objects.filter(title__iexact=value) # title__exact is case sensitive while title__iexact is case insensitive
     #     if qs.exists():
