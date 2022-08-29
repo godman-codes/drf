@@ -133,5 +133,8 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_PERMISSION_CLASSES" : [
         "rest_framework.permissions.IsAuthenticatedOrReadOnly",
-    ]
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination', # this allows you go directly to pages easily by just putting them in your urls
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination', # this i still don't fully grab but promise to look in to 
+    'PAGE_SIZE': 10
 }
