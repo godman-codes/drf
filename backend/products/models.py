@@ -34,8 +34,17 @@ class Product(models.Model):
     public = models.BooleanField(default=False)
     objects =  ProductManager() # this will allow all methods defined in the product manager callable from the view on the model class
 
+    def is_public(self):
+        '''
+        this meant to return a boolean value
+        '''
+        return self.public
+
     @property
     def sale_price(self):
+        '''
+        the point of having this function is for added flexibility
+        '''
         return round(float(self.price) * 0.9, 2)
 
     def get_discount(self):
