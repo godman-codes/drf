@@ -3,7 +3,7 @@ from rest_framework.reverse import reverse
 from api.serializers import UserPublicSerializer
 from .models import Product
 from .validators import validate_title, validate_title_no_hello, unique_product_title
-from api.serializers import UserProductInlineSerializer
+# from api.serializers import UserProductInlineSerializer
 class ProductSerializers(serializers.ModelSerializer):
     '''
     create it like forms in normal django project the only difference
