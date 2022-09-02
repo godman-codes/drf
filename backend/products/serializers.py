@@ -28,7 +28,7 @@ class ProductSerializers(serializers.ModelSerializer):
     title = serializers.CharField(validators=[validate_title_no_hello, unique_product_title]) # the title attribute will validate against the imported validation function from validate.py 
     name = serializers.CharField(source='title', read_only=True) # this creates a read only field that is gets its value from the title and maybe it only works with attributes in the database model
     # other_products = UserProductInlineSerializer(source='user.product_set.all', read_only=True, many=True) # the source grabs it from the tables relationship to the user tables
-
+    public = serializers.BooleanField(read_only=True)
     class Meta:
         model = Product
         fields = [
@@ -43,6 +43,7 @@ class ProductSerializers(serializers.ModelSerializer):
             'name',
             'price',
             'sale_price',
+            'public',
             # 'my_discount', #changed this from get_discount to discount and it raised an error because it could not get the get discount function from the product model class
             # 'my_user_data',
             # 'other_products'
