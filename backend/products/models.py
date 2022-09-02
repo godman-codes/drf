@@ -11,9 +11,11 @@ class ProductQuerySet(models.QuerySet):
 
     def search(self, query, user=None):
         lookup = Q(title__icontains=query) | Q(content__icontains=query) # this will check both title and content
-        qs = self.filter(lookup) 
+        qs = self.is_public().filter(lookup) # this checks the database for the lookup and also checks if its public
         if user is not None:
-            qs = qs.filter(user=user) # if there is a user you filter further down with the user
+            # qs = qs.filter(user=user) # if there is a user you filter further down with the user
+            qs2 = self.filter(user=user).filter(lookup) # this checks for the lookup in the data the user owns
+            qs = (qs | qs2).distinct() # this merges the two so it can return not only public data but also private data that the user owns
         return qs
 
 class ProductManager(models.Manager):
@@ -30,6 +32,7 @@ class Product(models.Model):
     content = models.TextField(blank=True, null=True)
     price = models.DecimalField(decimal_places=2, max_digits=15, default=99.99)
     public = models.BooleanField(default=False)
+    objects =  ProductManager() # this will allow all methods defined in the product manager callable from the view on the model class
 
     @property
     def sale_price(self):
