@@ -1,3 +1,10 @@
 {
-   "cSpell.words": ["authtoken", "cfehome", "viewsets"]
+   "cSpell.words": [
+      "algoliasearch",
+      "authtoken",
+      "cfehome",
+      "dotenv",
+      "godman",
+      "viewsets"
+   ]
 }

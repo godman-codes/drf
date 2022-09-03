@@ -9,11 +9,13 @@ class ProductIndex(AlgoliaIndex):
     this field will be mapped to its equivalent in the serializer class
     NOTE: you dont want to add relevant and secured in formations to algolia
     """
-    should_index = 'is_public'
+    should_index = 'is_public' # this will make algolia only show data that is public in respect of 
+    # any other criteria because is_public is a instance function on the product model
     fields = [
         'title',
         'content',
         'price',
         'user',
-        'public'
+        'public',
     ]
+    tags = 'get_tags_list'

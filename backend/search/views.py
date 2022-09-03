@@ -1,8 +1,18 @@
 from rest_framework import generics
+from rest_framework.response import Response
 from products.models import Product
 from products.serializers import ProductSerializers
+from . import client
+class SearchListView(generics.GenericAPIView):
+    def get(self, request, *args, **kwargs):
+        query = request.GET.get('q')
+        tag = request.GET.get('tag') or None # this gets the parameters from the request objects which is tags 
+        if not query:
+            return Response('', status=404)
+        results = client.perform_search(query, tags=[tag]) # then we call the perform search operation passing query as query and tags as a **kwargs NOTE: tags is a list 
+        return Response(results)
 
-class SearchListView(generics.ListCreateAPIView):
+class SearchListOldView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializers
 

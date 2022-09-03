@@ -1,9 +1,11 @@
+import random
 from django.db import models
 from django.conf import settings
 from django.db.models import Q
 
 User = settings.AUTH_USER_MODEL # just a string to auth.user
 
+TAGS_MODEL_VALUES = ['electronics', 'cars', 'boats', 'movies', 'camera']
 class ProductQuerySet(models.QuerySet):
 
     def is_public(self):
@@ -31,7 +33,7 @@ class Product(models.Model):
     title = models.CharField(max_length=120)
     content = models.TextField(blank=True, null=True)
     price = models.DecimalField(decimal_places=2, max_digits=15, default=99.99)
-    public = models.BooleanField(default=False)
+    public = models.BooleanField(default=True)
     objects =  ProductManager() # this will allow all methods defined in the product manager callable from the view on the model class
 
     def is_public(self):
@@ -39,6 +41,9 @@ class Product(models.Model):
         this meant to return a boolean value
         '''
         return self.public
+
+    def get_tags_list(self):
+        return [random.choice(TAGS_MODEL_VALUES)] # getting a random choice from the TAGS_MODEL_VALUES list
 
     @property
     def sale_price(self):
