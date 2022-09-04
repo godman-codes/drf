@@ -46,6 +46,14 @@ class Product(models.Model):
         return [random.choice(TAGS_MODEL_VALUES)] # getting a random choice from the TAGS_MODEL_VALUES list
 
     @property
+    def body(self):
+        '''
+        in case you want to change the name of content without doing that to the model
+        you will also be able to create and update but on the json input it will be body not content
+        '''
+        return self.content
+
+    @property
     def sale_price(self):
         '''
         the point of having this function is for added flexibility

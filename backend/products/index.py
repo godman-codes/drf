@@ -13,7 +13,7 @@ class ProductIndex(AlgoliaIndex):
     # any other criteria because is_public is a instance function on the product model
     fields = [
         'title',
-        'content',
+        'body',
         'price',
         'user',
         'public',
