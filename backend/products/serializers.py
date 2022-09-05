@@ -30,6 +30,7 @@ class ProductSerializers(serializers.ModelSerializer):
     # other_products = UserProductInlineSerializer(source='user.product_set.all', read_only=True, many=True) # the source grabs it from the tables relationship to the user tables
     public = serializers.BooleanField()
     body = serializers.CharField(source='content') # this will alow us to update into content using body as the the attributes without this body will show as read_only=True
+    # path = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = Product
         fields = [
@@ -37,6 +38,7 @@ class ProductSerializers(serializers.ModelSerializer):
             'owner', 
             'edit_url',
             'url',
+            'path',
             # 'email',
             'pk',
             'title',
@@ -59,8 +61,12 @@ class ProductSerializers(serializers.ModelSerializer):
     #     print(obj.user)
     #     my_products_qs = self.user.product_set.all()
     #     return UserProductInlineSerializer(my_products_qs, many=True, context=self.context).data
-    
-    
+
+    # def get_path(self, obj):
+    #     request = self.context.get('request')
+    #     if request is None:
+    #         return None
+    #     return reverse("product-detail", kwargs = {'pk': obj.pk}, request=request)
     def get_my_user_data(self, obj):
         return {
             "username": obj.user.username,

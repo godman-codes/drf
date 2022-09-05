@@ -2,6 +2,7 @@ import random
 from django.db import models
 from django.conf import settings
 from django.db.models import Q
+from rest_framework.reverse import reverse
 
 User = settings.AUTH_USER_MODEL # just a string to auth.user
 
@@ -52,6 +53,18 @@ class Product(models.Model):
         you will also be able to create and update but on the json input it will be body not content
         '''
         return self.content
+
+    def get_absolute_url(self):
+        return f'/api/product/{self.pk}'
+
+    @property
+    def url(self):
+        return self.get_absolute_url()
+
+    
+    @property
+    def path(self):
+        return f"/product/{self.pk}/"
 
     @property
     def sale_price(self):
