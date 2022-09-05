@@ -5,6 +5,7 @@
       "cfehome",
       "dotenv",
       "godman",
+      "simplejwt",
       "viewsets"
    ]
 }
