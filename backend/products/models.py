@@ -55,7 +55,7 @@ class Product(models.Model):
         return self.content
 
     def get_absolute_url(self):
-        return f'/api/product/{self.pk}'
+        return f'/api/products/{self.pk}'
 
     @property
     def url(self):
@@ -64,7 +64,7 @@ class Product(models.Model):
     
     @property
     def path(self):
-        return f"/product/{self.pk}/"
+        return f"/products/{self.pk}/"
 
     @property
     def sale_price(self):
