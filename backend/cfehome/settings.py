@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     # third api services
     'algoliasearch_django',
     # third party packages
+    'corsheaders', # cors header NOTE: very important 
     'rest_framework.authtoken', # for generating token 
     'rest_framework',
     'rest_framework_simplejwt',
@@ -53,6 +54,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware', # added this for cors headers NOTE: very important
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -61,7 +63,15 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'cfehome.urls'
+CORS_URLS_REGEX = r"^/api/.*"   # i think this is to make sure that there is a /api/ in the urls or something NOTE: check later 
+CORS_ALLOWED_ORIGINS = [] # this is a list of all the allowed origins or links that can access you api
 
+if DEBUG:
+    CORS_ALLOWED_ORIGINS += [
+        'http://127.0.0.1:8111',
+        'http://127.0.0.1:5500',
+    ] # if debug is False that is when tha api is in production you want to disable this cors_allowed_origins
+    
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
